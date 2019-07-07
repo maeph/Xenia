@@ -189,43 +189,6 @@
                 <extensions>true</extensions>
             </plugin>
             <plugin>
-              <groupId>com.google.code.maven-replacer-plugin</groupId>
-              <artifactId>replacer</artifactId>
-              <version>1.5.3</version>
-              <executions>
-                <execution>
-                  <phase>prepare-package</phase>
-                  <goals>
-                    <goal>replace</goal>
-                  </goals>
-                </execution>
-              </executions>
-              <configuration>
-                <file>target/classes/application.properties</file>
-                <regex>false</regex>
-                <replacements>
-                  <replacement>
-                    <token>meetup.key = xxx</token>
-                    <value>meetup.key = ${MEETUP_KEY}</value>
-                  </replacement>
-                  <replacement>
-                    <token>meetup.groupUrlName = yyy</token>
-                    <value>meetup.groupUrlName = ${MEETUP_NAME}</value>
-                  </replacement>
-                    <replacement>
-                        <token>oauth.clientId = xxx</token>
-                        <value>oauth.clientId = ${CLIENT_ID}</value>
-                    </replacement>
-                    <replacement>
-                        <token>oauth.clientSecret = clientSecret</token>
-                        <value>oauth.clientSecret = ${CLIENT_SECRET}</value>
-                    </replacement>
-                </replacements>
-              </configuration>
-            </plugin>
-
-
-            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
