@@ -63,6 +63,13 @@ angular.module('Xenia.Event')
             Attendee.refreshAll($routeParams.id).then(function(result){
                 event.attendees = result.data;
                 event.refreshingAttendees = false;
+            },
+
+            function(error) {
+                window.location.replace("https://secure.meetup.com/oauth2/authorize" +
+                    "?client_id="+ error.data.clientId +
+                    "&response_type=code" +
+                    "&redirect_uri=http://localhost:8000/app/#/oauth2/event/" + $routeParams.id);
             });
         };
 

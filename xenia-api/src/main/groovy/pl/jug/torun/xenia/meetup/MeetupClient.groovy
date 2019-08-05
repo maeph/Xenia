@@ -25,13 +25,13 @@ final class MeetupClient {
         this.restTemplate = restTemplate
     }
 
-    List<Event> getAllEvents() {
+    List<Event> getAllEvents() throws InvalidTokenException {
         return restTemplate.exchange("/events?only=id,name,time&status=upcoming,past",
                 HttpMethod.GET, getAuthHeaders(), EventsResponse).body.getResults() ?: []
 
     }
 
-    List<Member> getAllEventAttendees(long id) {
+    List<Member> getAllEventAttendees(long id) throws InvalidTokenException {
 
         def url = String.format(
                 "/rsvps?event_id=%d&only=%s&rsvp=%s",
@@ -42,9 +42,9 @@ final class MeetupClient {
         return restTemplate.exchange(url, HttpMethod.GET, getAuthHeaders(), MembersResponse).body.getResults() ?: []
     }
 
-    private HttpEntity getAuthHeaders() {
-        if (oAuthData.requestToken == null) {
-            throw new RuntimeException("Access token not set!")
+    private HttpEntity getAuthHeaders() throws InvalidTokenException {
+        if (oAuthData.isTokenInvalid()) {
+            throw new InvalidTokenException(oAuthData.clientId)
         }
 
         HttpHeaders headers = new HttpHeaders();

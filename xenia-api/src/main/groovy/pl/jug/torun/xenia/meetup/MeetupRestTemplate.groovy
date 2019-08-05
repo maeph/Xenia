@@ -36,17 +36,16 @@ final class MeetupRestTemplate extends RestTemplate {
 
     @Override
     protected ClientHttpRequest createRequest(URI uri, HttpMethod method) throws IOException {
-        URI meetupUri = null;
         try {
-            meetupUri = new URI(String.format("%s%s%sgroup_urlname=%s",
+            URI meetupUri = new URI(String.format("%s%s%sgroup_urlname=%s",
                     BASE_URL,
                     uri.toString(),
                     uri.toString().contains("?") ? "&" : "?",
                     meetupGroupNameUrl
             ))
+            return super.createRequest(meetupUri, method)
         } catch (URISyntaxException e) {
             throw new RuntimeException(e)
         }
-        return super.createRequest(meetupUri, method)
     }
 }

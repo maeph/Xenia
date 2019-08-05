@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
+import pl.jug.torun.xenia.meetup.InvalidTokenException
 import pl.jug.torun.xenia.meetup.MeetupClient
 import pl.jug.torun.xenia.meetup.MemberRepository
 
@@ -22,7 +23,7 @@ class AttendeesSynchronizationService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void synchronizeLocalAttendeesWithRemoteService(final Event event) {
+    void synchronizeLocalAttendeesWithRemoteService(final Event event) throws InvalidTokenException {
         attendeeRepository.findAllByEventId(event.id).each {
             attendeeRepository.delete(it)
         }

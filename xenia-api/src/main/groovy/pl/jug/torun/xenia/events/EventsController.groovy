@@ -1,10 +1,17 @@
 package pl.jug.torun.xenia.events
 
+import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.client.HttpClientErrorException
+import pl.jug.torun.xenia.meetup.InvalidTokenException
+
+import java.nio.charset.Charset
 
 @RestController
 @RequestMapping(value = "/events", produces = "application/json")
@@ -27,9 +34,13 @@ final class EventsController {
     }
 
     @RequestMapping(value = "/refresh", method = RequestMethod.POST)
-    public List<Event> refresh() {
-        synchronizationService.synchronizeLocalEventsWithRemoteService()
-        return listAll()
+    public ResponseEntity<?> refresh() {
+        try {
+            synchronizationService.synchronizeLocalEventsWithRemoteService()
+            return new ResponseEntity<>(listAll(), HttpStatus.OK)
+        } catch (InvalidTokenException e) {
+            return new ResponseEntity<>(["clientId" : e.clientId], HttpStatus.UNAUTHORIZED)
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

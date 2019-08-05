@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import java.awt.Desktop
+import java.time.Duration
 
 @Component
 @Configuration
@@ -14,26 +15,17 @@ class OAuthData {
     String requestToken
     String refreshToken
     int expiryPeriod
+    long tokenTime
 
     String clientId
     String clientSecret
 
-    @PostConstruct
-    void init() {
-        String address = "https://secure.meetup.com/oauth2/authorize" +
-                "?client_id="+ clientId +
-                "&response_type=code" +
-                "&redirect_uri=http://localhost:8080/oauth2/redirect";
-
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            Desktop.getDesktop().browse(new URI(address))
-        } else {
-            println "Browse action not supported, please navigate manually to the following address:"
-            println address
-        }
+    boolean isTokenInvalid() {
+        return requestToken == null || (tokenTime + Duration.ofSeconds(expiryPeriod).toMillis() < System.currentTimeMillis())
     }
 
     void fromResponse(response) {
+        tokenTime = System.currentTimeMillis()
         refreshToken = response["refresh_token"]
         expiryPeriod = response["expires_in"] as Integer
         requestToken = response["access_token"]

@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 @RestController
-@RequestMapping(value = "/oauth2", produces = "text/plain")
+@RequestMapping(value = "/oauth2", produces = "application/json")
 class OAuthCallbackController {
 
     @Autowired
@@ -19,7 +19,8 @@ class OAuthCallbackController {
     @RequestMapping(value = "/redirect", method = RequestMethod.GET)
     String getToken(@RequestParam("code") String code) {
         def http = new HTTPBuilder("https://secure.meetup.com/oauth2/access")
-        def response = http.post(body: getBodyForTokenRequest(oAuthData.clientId, oAuthData.clientSecret, code))
+        def bodyForTokenRequest = getBodyForTokenRequest(oAuthData.clientId, oAuthData.clientSecret, code)
+        def response = http.post(body: bodyForTokenRequest)
 
         oAuthData.fromResponse(response)
 
@@ -31,7 +32,7 @@ class OAuthCallbackController {
                 client_id    : clientId,
                 client_secret: clientSecret,
                 grant_type   : "authorization_code",
-                redirect_uri : "http://localhost:8080/oauth2/redirect",
+                redirect_uri : "http://localhost:8000/app/",
                 code         : code
         ]
     };

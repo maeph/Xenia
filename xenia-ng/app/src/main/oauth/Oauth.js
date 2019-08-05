@@ -1,0 +1,1 @@
+angular.module('Xenia.Oauth', ['Xenia.Common']);
